@@ -1,6 +1,10 @@
 import { Flex, Skeleton } from 'antd';
 import { memo } from 'react';
 
+/**
+ * 聊天列表骨架
+ *
+ */
 const SkeletonList = memo(() => {
   return (
     <Flex gap={24} vertical style={{ marginTop: 24 }}>

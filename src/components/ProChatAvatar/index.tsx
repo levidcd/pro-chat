@@ -31,6 +31,7 @@ export interface ProChatAvatarProps extends AvatarProps {
 }
 
 /**
+ * 头像原子组件
  * @module Avatar
  * @description 头像组件，用于显示用户头像信息
  * @exports Avatar

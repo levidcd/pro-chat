@@ -1,5 +1,10 @@
 import dayjs from 'dayjs';
 
+/**
+ * 业务处理
+ * @param time
+ * @returns
+ */
 export const formatTime = (time: number): string => {
   if (typeof process !== 'undefined' && process.env.NODE_ENV === 'TEST') {
     return '2024-02-27 17:20:00';

@@ -18,6 +18,11 @@ export interface TitleProps {
   style?: React.CSSProperties;
 }
 
+/**
+ *
+ * @param token
+ * @returns
+ */
 const genStyle: GenerateStyle<ChatTokenType> = (token) => {
   return {
     [token.componentCls]: {

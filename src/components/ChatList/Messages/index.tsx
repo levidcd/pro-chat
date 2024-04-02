@@ -13,6 +13,10 @@ const MemoDetails = memo((props) => <Collapse style={{ marginBottom: '1em' }} {.
 const MemoImage = memo((props) => <img {...props} />);
 const MemoAlink = memo((props) => <Typography.Link {...props} />);
 
+/**
+ * 自定义组件
+ * https://github.com/remarkjs/react-markdown
+ */
 const components: any = {
   details: MemoDetails,
   hr: MemoHr,
@@ -21,6 +25,12 @@ const components: any = {
   // pre: Code,
 };
 
+/**
+ * 聊天内容组件
+ * 等待时展示loading
+ * 如果内部不是 string 类型，直接展示
+ * 否则展示 markdown
+ */
 export const MessageComponent: React.FC<{
   content: string | React.ReactNode;
 }> = memo(({ content }) => {

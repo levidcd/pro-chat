@@ -74,16 +74,29 @@ export const useChatList = (props: {
     currentContent: { preContent: React.ReactNode; currentContent: string },
   ) => Promise<ChatMessage<any>>;
 }) => {
+  /**
+   * 取消请求控制器缓存
+   */
   let controller = useRef<AbortController | null>(null);
 
+  /**
+   *  默认loading提示语
+   */
   const [loadingMessage, setLoadingMessage] = useMergedState<ChatMessage<any> | undefined>(
     undefined,
   );
 
+  /**
+   * 获取loading提示语
+   *
+   */
   const getLoadingMessage = useRefFunction(() => {
     return loadingMessage;
   });
 
+  /**
+   * chatList状态保存
+   */
   const [chatList, setChatList] = useMergedState<ChatMessage<any>[]>(
     [
       {
@@ -106,8 +119,15 @@ export const useChatList = (props: {
     },
   );
 
+  /**
+   *  设置消息条目
+   *
+   */
   const setMessageItem = useRefFunction((id: string, content: ChatMessage<any>) => {
     const newChatList = chatList.map((item) => {
+      /**
+       *  TODO: 代码释义
+       */
       if (item.id === id) {
         return {
           ...item,
@@ -119,10 +139,17 @@ export const useChatList = (props: {
     setChatList(newChatList);
   });
 
+  /**
+   *   loading状态
+   *
+   */
   const [loading, setLoading] = useMergedState<boolean>(true, {
     value: props.loading,
   });
 
+  /**
+   *  请求聊天列表
+   */
   const fetchChatList = useRefFunction(async () => {
     if (!props.request) {
       setLoading(false);
@@ -141,10 +168,19 @@ export const useChatList = (props: {
     }
   });
 
+  /**
+   *  清空聊天列表
+   *
+   */
   const clearMessage = useRefFunction(() => {
     setChatList([]);
   });
 
+  /**
+   *  发送消息
+   *
+   *
+   */
   const sendMessage = useRefFunction(async (message: string) => {
     controller.current = new AbortController();
     setChatList((prev) => [
@@ -161,6 +197,9 @@ export const useChatList = (props: {
 
     if (!props?.sendMessageRequest) return;
 
+    /**
+     * 请求前，设置loading
+     */
     setLoadingMessage({
       id: crypto.randomUUID(),
       role: 'bot',
@@ -170,6 +209,9 @@ export const useChatList = (props: {
       content: LOADING_FLAT,
     } as ChatMessage<any>);
 
+    /**
+     * 自执行，以及取消请求
+     */
     const res = (await Promise.race([
       props.sendMessageRequest?.(),
       new Promise((_, reject) => {
@@ -179,6 +221,9 @@ export const useChatList = (props: {
       }),
     ])) as Response | ChatMessage<any>;
 
+    /**
+     * 如果是请求回来的数据，开始解析数据
+     */
     if (res instanceof Response) {
       processSSE(res, {
         signal: controller.current.signal,
@@ -186,6 +231,10 @@ export const useChatList = (props: {
           setLoadingMessage(undefined);
         },
         onMessageHandle: async (text, res, type) => {
+          /** 如果请求结束或者取消
+           *  获取是否在loading,
+           *  展示最新内容并且移除loading
+           */
           if (type === 'done' || controller.current.signal.aborted) {
             const message = getLoadingMessage();
             if (!message) return;
@@ -195,6 +244,9 @@ export const useChatList = (props: {
             setLoadingMessage(undefined);
             return;
           }
+          /**
+           * 如果还在loading，内容是loading_flat, 不展示，否则拼接展示
+           */
           const content =
             getLoadingMessage()?.content === LOADING_FLAT
               ? ''
@@ -205,15 +257,23 @@ export const useChatList = (props: {
             originContent: text,
             content: content,
           };
+          /**
+           * 转换消息loading状态
+           */
           const transformMessage = await props.transformToChatMessage?.(message, {
             preContent:
               getLoadingMessage()?.content === LOADING_FLAT ? '' : getLoadingMessage()?.content,
             currentContent: text,
           });
-
+          /**
+           * 更新至loading状态
+           */
           setLoadingMessage(transformMessage || message);
         },
         onErrorHandle: async (error) => {
+          /**
+           *  获取错误信息
+           */
           const content = error.message;
           const message = await props.transformToChatMessage?.(
             {
@@ -228,10 +288,17 @@ export const useChatList = (props: {
             },
           );
           setLoadingMessage(undefined);
+          /**
+           * 把出错的消息塞进去
+           */
           setChatList((prev) => [...prev, message]);
         },
       });
     } else {
+      /**
+       * 被取消的消息。
+       * 生成消息
+       */
       const message = {
         ...getLoadingMessage(),
         updateAt: Date.now(),
@@ -248,11 +315,17 @@ export const useChatList = (props: {
     }
   });
 
+  /**
+   * 取消请求
+   */
   const stopGenerateMessage = useRefFunction(() => {
     controller.current.abort?.();
   });
 
   useEffect(() => {
+    /**
+     * 获取消息列表
+     */
     fetchChatList();
   }, []);
 

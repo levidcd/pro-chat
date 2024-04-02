@@ -7,6 +7,14 @@ import { ProChatTitle } from '../ProChatTitle';
 import { useStyle } from './style';
 import type { ChatItemProps } from './type';
 
+/**
+ * 通用渲染函数, 如果有自定义渲染函数, 则使用自定义渲染函数, 否则使用默认渲染函数
+ * @param render
+ * @param props
+ * @param defaultDom
+ * @param rest
+ * @returns
+ */
 const runRender = (render: any, props: ChatItemProps, defaultDom, ...rest) => {
   if (render) {
     return render(props, defaultDom, ...rest);
@@ -14,6 +22,11 @@ const runRender = (render: any, props: ChatItemProps, defaultDom, ...rest) => {
   return defaultDom;
 };
 
+/**
+ * 列表条目
+ * @param props
+ * @returns
+ */
 export const ChatItem: React.FC<ChatItemProps> = (props) => {
   const {
     onAvatarClick,
@@ -40,6 +53,7 @@ export const ChatItem: React.FC<ChatItemProps> = (props) => {
 
   if (chatItemRenderConfig?.render === false) return null;
 
+  /** 标题 */
   const titleDom = runRender(
     chatItemRenderConfig?.titleRender,
     props,
@@ -52,6 +66,7 @@ export const ChatItem: React.FC<ChatItemProps> = (props) => {
     />,
   );
 
+  /** 头像 */
   const avatarDom = runRender(
     chatItemRenderConfig?.avatarRender,
     props,
@@ -65,10 +80,13 @@ export const ChatItem: React.FC<ChatItemProps> = (props) => {
     />,
   );
 
+  /** 内容 */
   const childrenDom = runRender(chatItemRenderConfig?.contentRender, props, children);
 
+  /** 拓展区域 */
   const messageExtraDom = runRender(chatItemRenderConfig?.actionsRender, props, messageExtra);
 
+  /** 组合所有子组件 */
   const itemDom = wrapSSR(
     <Flex
       className={cx(prefixClass, hashId, `${prefixClass}-${placement}`, className)}

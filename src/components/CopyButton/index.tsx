@@ -16,6 +16,9 @@ export type CopyButtonProps = {
   content: string;
 } & TooltipProps;
 
+/**
+ * 复制按钮
+ */
 export const CopyButton = memo<CopyButtonProps>(
   ({ content, className, placement = 'right', ...props }) => {
     const { copied, setCopied } = useCopied();

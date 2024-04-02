@@ -7,6 +7,11 @@ export interface LoadingProps {
   placement?: ChatItemProps['placement'];
 }
 
+/**
+ * loading组件， 状态受控
+ * @param param0
+ * @returns
+ */
 const Loading: React.FC<LoadingProps> = ({ loading }) => {
   if (!loading) return null;
 

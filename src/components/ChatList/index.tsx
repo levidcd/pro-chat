@@ -30,7 +30,11 @@ export type ChatListProps = {
   chatListItemExtraClassName?: string;
   chatListItemAvatarClassName?: string;
 };
-
+/**
+ * 消息列表组件 主要做message的渲染 和 状态处理
+ * @param props
+ * @returns
+ */
 const ChatList: React.FC<ChatListProps> = (props) => {
   const {
     chatListRef,

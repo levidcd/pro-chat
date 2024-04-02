@@ -215,7 +215,6 @@ export interface ProChatProps<
 /**
  * 对话组件的属性接口
  */
-
 export function ProChat<
   T extends Record<string, any> = Record<string, any>,
   Params extends Record<string, any> = Record<string, any>,
@@ -238,15 +237,38 @@ export function ProChat<
     classNames,
     sendMessageRequest,
   } = props;
+  /**
+   * 聊天列表容器的引用
+   *
+   */
   const chatListContainerRef = useRef<HTMLDivElement>(null);
+  /**
+   * 聊天输入区域的引用
+   *
+   */
   const areaHtml = useRef<HTMLDivElement>(null);
+  /**
+   * 是否渲染完成
+   *
+   */
   const [isInitRender, setIsRender] = useState(false);
+  /**
+   * 聊天列表容器的高度
+   *
+   *
+   */
   const [height, setHeight] = useState('100%' as string | number);
 
   useEffect(() => {
+    /**
+     * 初始化完成后，设置已经渲染的标识
+     */
     setIsRender(true);
   }, []);
 
+  /**
+   * 聊天列表的处理逻辑放在 useChatList 中
+   */
   const {
     chatList,
     loadingMessage,
@@ -280,12 +302,23 @@ export function ProChat<
         : undefined,
   });
 
+  /**
+   * 获取loadingMessage
+   * TODO: 为什么这样写
+   */
   const getChatLoadingMessage = useRefFunction(() => loadingMessage);
 
+  /**
+   * 获取chatList
+   * TODO: 为什么这样写
+   */
   const getChatList = useRefFunction(() => {
     return chatList;
   });
 
+  /**
+   * 暴露同级的操作
+   */
   useImperativeHandle(
     chatRef,
     () => {
@@ -308,6 +341,9 @@ export function ProChat<
     [chatRef],
   );
 
+  /**
+   * 这里是强制下滚，需要自己定制
+   */
   useEffect(() => {
     if (chatListContainerRef.current) {
       chatListContainerRef.current.scrollTo({
@@ -318,6 +354,10 @@ export function ProChat<
     }
   }, [loadingMessage]);
 
+  /**
+   * 底部的返回顶部按钮
+   *
+   */
   const backBottomDom = useMemo(() => {
     if (!isInitRender) return null;
     return (

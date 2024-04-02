@@ -36,7 +36,11 @@ export type ChatInputAreaProps = {
   actionsRender?: (defaultDoms: React.ReactNode[]) => ReactNode;
   typing: boolean;
 };
-
+/**
+ *
+ * @param props
+ * @returns
+ */
 export const ChatInputArea = (props: ChatInputAreaProps) => {
   const {
     className,
@@ -57,14 +61,34 @@ export const ChatInputArea = (props: ChatInputAreaProps) => {
     actionsRender,
   } = props || {};
 
+  /**
+   * 样式上下文
+   */
   const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
+  /**
+   * TODO:
+   *
+   */
   const [message, setMessage] = useState('');
+  /**
+   * 是否在输入
+   */
   const isChineseInput = useRef(false);
 
+  /**
+   *
+   */
   const prefixClass = getPrefixCls('pro-chat-input-area');
 
+  /**
+   *
+   */
   const { wrapSSR, hashId } = useStyle(prefixClass);
 
+  /**
+   * 消息发送
+   * 如果有发送就走传入的发送函数
+   */
   const send = useRefFunction(async () => {
     if (onSend && message) {
       const success = await onSend(message);

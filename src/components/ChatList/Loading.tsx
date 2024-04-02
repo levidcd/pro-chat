@@ -41,6 +41,10 @@ const Svg = () => (
   </svg>
 );
 
+/**
+ * loading组件
+ * @returns
+ */
 const BubblesLoading = () => {
   const { colorTextTertiary } = useTheme();
   return (

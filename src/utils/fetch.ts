@@ -1,5 +1,10 @@
 import { ChatMessageError } from '@/types';
 
+/**
+ * 获取消息错误
+ * @param response
+ * @returns
+ */
 export const getMessageError = async (response: Response) => {
   let chatMessageError: ChatMessageError;
 
@@ -51,6 +56,9 @@ export const processSSE = async (response: Response, options: FetchSSEOptions = 
     reader.cancel();
   });
 
+  /**
+   * 分片直接抛出去
+   */
   while (!done) {
     const { value, done: doneReading } = await reader.read();
     done = doneReading;
@@ -59,6 +67,9 @@ export const processSSE = async (response: Response, options: FetchSSEOptions = 
     options.onMessageHandle?.(chunkValue, returnRes, done ? 'done' : 'progress');
   }
 
+  /**
+   * 完成后触发onFinish时间
+   */
   if (done) {
     options.onFinish?.(finishText, 'done');
   }
